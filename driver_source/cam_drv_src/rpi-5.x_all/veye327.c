@@ -282,8 +282,6 @@ static int veye327_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
 static int veye327_set_ctrl(struct v4l2_ctrl *ctrl)
 {
     VEYE_TRACE
-    return 0;
-    #if 0
 	struct veye327 *veye327 =
 		container_of(ctrl->handler, struct veye327, ctrl_handler);
 	//struct i2c_client *client = v4l2_get_subdevdata(&veye327->sd);
@@ -298,7 +296,7 @@ static int veye327_set_ctrl(struct v4l2_ctrl *ctrl)
 	 * when power is up for streaming
 	 */
 
-/*	switch (ctrl->id) {
+	switch (ctrl->id) {
 	case V4L2_CID_ANALOGUE_GAIN:
 		ret = veye327_write_reg(veye327, VEYE327_REG_ANALOG_GAIN,
 				       VEYE327_REG_VALUE_08BIT, ctrl->val);
@@ -330,11 +328,10 @@ static int veye327_set_ctrl(struct v4l2_ctrl *ctrl)
 		ret = -EINVAL;
 		break;
 	}
-*/
-	//pm_runtime_put(&client->dev);
+
+	pm_runtime_put(&client->dev);
 
 	return ret;
-    #endif
 }
 
 static const struct v4l2_ctrl_ops veye327_ctrl_ops = {
@@ -734,7 +731,7 @@ static int veye327_init_controls(struct veye327 *veye327)
 					       VEYE327_PIXEL_RATE,
 					       VEYE327_PIXEL_RATE, 1,
 					       VEYE327_PIXEL_RATE);
-#if 0
+
 	/* Initial vblank/hblank/exposure parameters based on current mode */
 	veye327->vblank = v4l2_ctrl_new_std(ctrl_hdlr, &veye327_ctrl_ops,
 					   V4L2_CID_VBLANK, VEYE327_VBLANK_MIN,
@@ -792,7 +789,7 @@ static int veye327_init_controls(struct veye327 *veye327)
 				  VEYE327_TESTP_COLOUR_MAX);
 		/* The "Solid color" pattern is white by default */
 	}
-#endif
+
 	if (ctrl_hdlr->error) {
 		ret = ctrl_hdlr->error;
 		dev_err(&client->dev, "%s control init failed (%d)\n",
@@ -800,14 +797,14 @@ static int veye327_init_controls(struct veye327 *veye327)
 		goto error;
 	}
 
-	/*ret = v4l2_fwnode_device_parse(&client->dev, &props);
+	ret = v4l2_fwnode_device_parse(&client->dev, &props);
 	if (ret)
 		goto error;
 
 	ret = v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &veye327_ctrl_ops,
 					      &props);
 	if (ret)
-		goto error;*/
+		goto error;
 
 	veye327->sd.ctrl_handler = ctrl_hdlr;
 
